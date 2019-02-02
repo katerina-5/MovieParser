@@ -4,30 +4,35 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('espress-lecture-2:server');
-var http = require('http');
+const app = require('../app');
+// const debug = require('debug')('express_api');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+// var port = normalizePort(process.env.PORT || '3000');
+const port = process.env.PORT;
 app.set('port', port);
+const hostname = '127.0.0.1';
+app.set('hostname', hostname);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+// server.on('error', onError);
+// server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
