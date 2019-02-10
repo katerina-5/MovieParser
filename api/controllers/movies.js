@@ -1,4 +1,5 @@
 const Movies = require('../models/movies');
+const Actors = require('../models/actors');
 
 module.exports = {
   home,
@@ -21,7 +22,7 @@ function get_movie_list(req, res, next) {
 
   Movies.find({})
     .then(movies => {
-      console.log(movies);
+      // console.log(movies);
       res.send(movies);
     })
     .catch(error => next(error));
@@ -30,24 +31,37 @@ function get_movie_list(req, res, next) {
 // Display detail page for a specific movie.
 function get_movie_detail(req, res, next) {
   console.log('Movie detail');
-  console.log(req.body);
+  console.log(req.params);
+  // console.log(req.body);
 
-  res.send(req.body);
+  // res.send(req.body);
 
-  // Movies.find(req.body)
-  //   .then(movie => {
-  //     res.send(movie);
-  //   })
-  //   .catch(error => next(error));
+  Movies.findById(req.params)
+    .then(movie => {
+      res.send(movie);
+    })
+    .catch(error => next(error));
 }
 
 // movie create on POST.
 function create_movie(req, res, next) {
   // res.send('Movie create');
   console.log('Movie create');
-  console.log(req.body);
+  // console.log(req.body);
 
   // res.send(req.body);
+
+  req.body.actors.forEach(actor => {
+    if (actor.actorType === "Person") {
+      Actors.create(actor)
+        .catch(error => next(error));
+    } else {
+      console.log("undefined error");
+    }
+  });
+
+  // Actors.create(req.body.actors)
+  //   .catch(error => next(error));
 
   Movies.create(req.body)
     .then(movie => {
@@ -61,7 +75,14 @@ function delete_movie(req, res, next) {
   console.log('Movie delete');
   console.log(req.params.id);
 
-  res.send(req.params.id);
+  // res.send(req.params.id);
+
+  Movies.findByIdAndDelete(req.params.id)
+    .then(movie => {
+      console.log(movie);
+      res.send(`movie ${movie} deleted!`);
+    })
+    .catch(error => next(error));
 
   // Movies.findById(req.params.id)
   //   .then(movie => {
@@ -91,7 +112,13 @@ function update_movie(req, res, next) {
   console.log('Movie update');
 
   console.log(req.params.id);
-  res.send(req.params.id);
+  console.log(req.query);
+
+  Movies.findByIdAndUpdate(req.params.id, req.body)
+    .then(movie => {
+      res.send(movie);
+    })
+    .catch(error => next(error));
 
   // Movies.update(req.body)
   //   .then(movie => {
