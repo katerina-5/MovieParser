@@ -18,8 +18,6 @@ function home(req, res, next) {
 function get_movie_list(req, res, next) {
   console.log('List of movies');
 
-  // res.send(req.body);
-
   Movies.find({})
     .then(movies => {
       // console.log(movies);
@@ -31,12 +29,11 @@ function get_movie_list(req, res, next) {
 // Display detail page for a specific movie.
 function get_movie_detail(req, res, next) {
   console.log('Movie detail');
-  console.log(req.params);
+
+  // console.log(req.params.id);
   // console.log(req.body);
 
-  // res.send(req.body);
-
-  Movies.findById(req.params)
+  Movies.findById(req.params.id)
     .then(movie => {
       res.send(movie);
     })
@@ -45,11 +42,9 @@ function get_movie_detail(req, res, next) {
 
 // movie create on POST.
 function create_movie(req, res, next) {
-  // res.send('Movie create');
   console.log('Movie create');
-  // console.log(req.body);
 
-  // res.send(req.body);
+  // console.log(req.body);
 
   req.body.actors.forEach(actor => {
     if (actor.actorType === "Person") {
@@ -73,9 +68,8 @@ function create_movie(req, res, next) {
 // movie delete on DELETE.
 function delete_movie(req, res, next) {
   console.log('Movie delete');
-  console.log(req.params.id);
 
-  // res.send(req.params.id);
+  // console.log(req.params.id);
 
   Movies.findByIdAndDelete(req.params.id)
     .then(movie => {
@@ -83,46 +77,18 @@ function delete_movie(req, res, next) {
       res.send(`movie ${movie} deleted!`);
     })
     .catch(error => next(error));
-
-  // Movies.findById(req.params.id)
-  //   .then(movie => {
-  //     movies
-  //       .remove(movie)
-  //       .then(movie => {
-  //         res.send(`movie ${movie} deleted!`);
-  //       })
-  //       .catch(error => next(error));
-  //   })
-  //   .catch(error => next(error));
-
-  // Movies.find(req.body)
-  //   .then(movie => {
-  //     movies
-  //       .remove(movie)
-  //       .then(movie => {
-  //         res.send(`movie ${movie} deleted!`);
-  //       })
-  //       .catch(error => next(error));
-  //   })
-  //   .catch(error => next(error));
 }
 
 // movie update on PUT.
 function update_movie(req, res, next) {
   console.log('Movie update');
 
-  console.log(req.params.id);
-  console.log(req.query);
+  // console.log(req.params.id);
+  // console.log(req.body);
 
   Movies.findByIdAndUpdate(req.params.id, req.body)
     .then(movie => {
       res.send(movie);
     })
     .catch(error => next(error));
-
-  // Movies.update(req.body)
-  //   .then(movie => {
-  //     res.send(movie);
-  //   })
-  //   .catch(error => next(error));
 }
