@@ -1,5 +1,4 @@
 const Movies = require('../models/movies');
-const Actors = require('../models/actors');
 
 module.exports = {
   home,
@@ -45,18 +44,6 @@ function create_movie(req, res, next) {
   console.log('Movie create');
 
   // console.log(req.body);
-
-  req.body.actors.forEach(actor => {
-    if (actor.actorType === "Person") {
-      Actors.create(actor)
-        .catch(error => next(error));
-    } else {
-      console.log("undefined error");
-    }
-  });
-
-  // Actors.create(req.body.actors)
-  //   .catch(error => next(error));
 
   Movies.create(req.body)
     .then(movie => {
