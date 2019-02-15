@@ -7,10 +7,10 @@ var movie_controller = require('../controllers/movies');
 /// MOVIES ROUTES ///
 
 // GET catalog home page.
-router.get('/', movie_controller.home);
+// router.get('/', movie_controller.home);
 
 // POST request for creating Movie.
-router.post('/create', movie_controller.create_movie);
+router.post('/', movie_controller.create_movie);
 
 // PUT request to update Movie.
 router.put('/:id', movie_controller.update_movie);
@@ -19,7 +19,7 @@ router.put('/:id', movie_controller.update_movie);
 router.delete('/:id', movie_controller.delete_movie);
 
 // GET request for list of all Movie items.
-router.get('/all', movie_controller.get_movie_list);
+router.get('/', movie_controller.get_movie_list);
 
 // GET request for one Movie.
 router.get('/:id', movie_controller.get_movie_detail);
