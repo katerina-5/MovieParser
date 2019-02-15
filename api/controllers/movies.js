@@ -1,17 +1,12 @@
 const Movies = require('../models/movies');
 
 module.exports = {
-  home,
   get_movie_list,
   get_movie_detail,
   create_movie,
   update_movie,
   delete_movie
 };
-
-function home(req, res, next) {
-  res.send('Movies Page');
-}
 
 // Display list of all movies.
 function get_movie_list(req, res, next) {
