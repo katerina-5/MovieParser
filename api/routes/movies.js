@@ -6,9 +6,6 @@ var movie_controller = require('../controllers/movies');
 
 /// MOVIES ROUTES ///
 
-// GET catalog home page.
-// router.get('/', movie_controller.home);
-
 // POST request for creating Movie.
 router.post('/', movie_controller.create_movie);
 
