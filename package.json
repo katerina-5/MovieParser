@@ -1,0 +1,30 @@
+{
+  "name": "express_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api/app.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.4.7",
+    "multer": "^1.4.1",
+    "nodemon": "^1.18.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "set NODE_PATH=.; && nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katerina-5/MovieParser.git"
+  },
+  "author": "Katherine Shevchenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/katerina-5/MovieParser/issues"
+  },
+  "homepage": "https://github.com/katerina-5/MovieParser#readme"
+}
