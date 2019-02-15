@@ -18,35 +18,11 @@ const moviesSchema = new Schema({
     type: String,
     required: true
   },
-  // genre: [
-  //   {
-  //     type: String,
-  //     required: true
-  //   }
-  // ],
+  genres: Array,
   contentRating: String,
   actors: Array,
-  // actor: [
-  //   {
-  //     type: String,
-  //     url: String,
-  //     name: String
-  //   }
-  // ],
-  // director: [
-  //   {
-  //     type: String,
-  //     url: String,
-  //     name: String
-  //   }
-  // ],
-  // creator: [
-  //   {
-  //     type: String,
-  //     url: String,
-  //     name: String
-  //   }
-  // ],
+  directors: Array,
+  creators: Array,
   description: String,
   datePublished: String,
   keywords: String,
