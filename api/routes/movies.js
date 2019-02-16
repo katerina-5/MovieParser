@@ -1,8 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 // Require controller modules.
-var movie_controller = require('../controllers/movies');
+const movie_controller = require('../controllers/movies');
 
 /// MOVIES ROUTES ///
 
