@@ -16,7 +16,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "set NODE_PATH=.; && nodemon ./bin/www",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "set NODE_PATH=.; && nodemon ./bin/www",
     "parser": "node parser/app-parser.js"
