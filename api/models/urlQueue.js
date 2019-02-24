@@ -13,6 +13,6 @@ const urlQueueSchema = new Schema({
     }
 });
 
-const UrlQueue = mongoose.model('urlQueueSchema', urlQueueSchema);
+const UrlQueue = mongoose.model('url', urlQueueSchema);
 
 module.exports = UrlQueue;
