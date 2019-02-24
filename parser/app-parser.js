@@ -14,7 +14,8 @@ const hostname = "localhost";
 
 console.log(`Parser is listening on port ${process.env.PARSER_PORT}`);
 
-const urlArray = ['/title/tt0108778/', '/title/tt2575988/', '/title/tt0238784/', '/title/tt1243957/', '/title/tt5523010/', '/title/tt1661199/', '/title/tt0414387/'];
+// const urlArray = ['/title/tt0108778/', '/title/tt2575988/', '/title/tt0238784/', '/title/tt1243957/', '/title/tt5523010/', '/title/tt1661199/', '/title/tt0414387/'];
+const urlArray = libParser.getUrlArray();
 // const urlBegin = process.env.URL || 'https://www.imdb.com';
 const urlBegin = process.env.URL;
 

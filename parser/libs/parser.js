@@ -1,8 +1,10 @@
 const http = require('http');
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const querystring = require('querystring');
+require('dotenv').config();
 
 module.exports = {
+    getUrlArray,
     mainParser,
     getJSON,
     postJSON,
@@ -12,12 +14,59 @@ module.exports = {
 }
 
 function getUrlArray() {
+    let urlArray = getDataFromServer();
+    let resultUrlArray = [];
+
+    for (let i = 0; i < urlArray.length; i++) {
+        let urlTemp = urlArray[i];
+        console.log(urlTemp);
+        if (urlTemp.status === "NOT_ATTEMPTED") {
+            resultUrlArray.push(urlTemp);
+        }
+    }
+
+    return resultUrlArray;
+
     // get from db - all urlQueue
     // for (i = 0; i < length; i++)
     // if (status === "NOT_ATTEMPTED")
     // add in urlArray
     // return urlArray
 }
+
+function getDataFromServer() {
+    console.log("GET all urls");
+
+    const options = {
+        // host: 'localhost',
+        // port: `${process.env.PORT}`,
+        // path: '/urls/',
+        uri: `localhost:${process.env.PORT}/urls/`,
+        method: 'GET',
+        // headers: {
+        //     // 'Content-Type': 'application/x-www-form-urlencoded'
+        //     'Content-Type': 'application/json; charset=utf-8',
+        //     // 'Content-Length': Buffer.byteLength(1000)
+        // }
+    };
+
+    let urlArray = [];
+
+    const httpreq = http.request(options, function (error, response, body) {
+        if (!error) {
+            // res.write(response.statusCode);
+            console.log(response.statusCode);
+            console.log(body);
+        } else {
+            // res.write(error);
+            console.log(error);
+        }
+    });
+    httpreq.write();
+    httpreq.end();
+
+    return urlArray;
+};
 
 function mainParser(data) {
     let json = findJsonObject(data);
@@ -77,7 +126,7 @@ function postDataToServer(json) {
 
     const options = {
         host: 'localhost',
-        port: 3000,
+        port: `${process.env.PORT}`,
         path: '/movies/',
         method: 'POST',
         headers: {
