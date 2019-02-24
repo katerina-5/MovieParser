@@ -34,6 +34,8 @@ function get_movie_detail(req, res, next) {
 function create_movie(req, res, next) {
   console.log('Movie create');
 
+  // console.log(req.body);
+
   Movies.create(req.body)
     .then(movie => {
       res.send(movie);

@@ -5,7 +5,7 @@
  */
 
 const app = require('../app');
-// const debug = require('debug')('express_api');
+// const debug = require('debug')('express_api:server');
 const http = require('http');
 
 /**
