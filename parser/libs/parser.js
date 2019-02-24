@@ -11,6 +11,14 @@ module.exports = {
     findJsonObject
 }
 
+function getUrlArray() {
+    // get from db - all urlQueue
+    // for (i = 0; i < length; i++)
+    // if (status === "NOT_ATTEMPTED")
+    // add in urlArray
+    // return urlArray
+}
+
 function mainParser(data) {
     let json = findJsonObject(data);
     console.log(json.name);
