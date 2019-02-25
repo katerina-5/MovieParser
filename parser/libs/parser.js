@@ -4,6 +4,7 @@ const querystring = require('querystring');
 require('dotenv').config();
 
 module.exports = {
+    getUrlArrayFromFile,
     getUrlArray,
     mainParser,
     getJSON,
@@ -11,6 +12,19 @@ module.exports = {
     modifyJSON,
     postDataToServer,
     findJsonObject
+}
+
+function getUrlArrayFromFile() {
+    let urlArray = [];
+
+    let pathFile = __dirname + "/urls.txt";
+    console.log(pathFile);
+
+    httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", pathFile, true);
+    console.log(httpRequest.responseText);
+    console.log(httpRequest.status);
+    httpRequest.send(null);
 }
 
 function getUrlArray() {
