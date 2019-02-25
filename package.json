@@ -16,9 +16,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "npm run server",
+    "start": "node api/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "set NODE_PATH=.; && nodemon ./bin/www api/app.js && npm run parser",
+    "server": "set NODE_PATH=.; && nodemon ./bin/www api/app.js",
     "parser": "node parser/app-parser.js"
   },
   "repository": {
