@@ -10,7 +10,7 @@ const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const libParser = require("./libs/parser");
 
 const port = process.env.PARSER_PORT;
-const hostname = "localhost";
+// const hostname = "localhost";
 
 console.log(`Parser is listening on port ${process.env.PARSER_PORT}`);
 
@@ -49,8 +49,6 @@ if (cluster.isMaster) {
         res.writeHead(200);
         res.end('hello world\n');
     }).listen(port);
-
-    // server.listen(port, hostname);
 
     console.log(`Worker ${process.pid} started`);
 }

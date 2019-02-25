@@ -18,7 +18,7 @@
   "scripts": {
     "start": "npm run server && npm run parser",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "set NODE_PATH=.; && nodemon ./bin/www",
+    "server": "set NODE_PATH=.; && nodemon ./bin/www api/app.js",
     "parser": "node parser/app-parser.js"
   },
   "repository": {
