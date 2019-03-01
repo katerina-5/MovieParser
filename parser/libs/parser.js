@@ -1,6 +1,7 @@
 const http = require('http');
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const querystring = require('querystring');
+const request = require('request');
 require('dotenv').config();
 
 module.exports = {
@@ -28,7 +29,8 @@ function getUrlArrayFromFile() {
 }
 
 function getUrlArray() {
-    let urlArray = getDataFromServer();
+    // let urlArray = getDataFromServer();
+    let urlArray = getFromServer(); // using 'request'
     let resultUrlArray = [];
 
     for (let i = 0; i < urlArray.length; i++) {
@@ -48,20 +50,50 @@ function getUrlArray() {
     // return urlArray
 }
 
+function getFromServer() {
+    // METHOD, that use 'request'
+
+    // const url = `localhost:${process.env.PORT}/urls/`;
+
+    var options = {
+        host: 'localhost',
+        path: `${process.env.PORT}/urls/`
+    };
+
+    callback = function (response) {
+        var str = '';
+
+        //another chunk of data has been recieved, so append it to `str`
+        response.on('data', function (chunk) {
+            str += chunk;
+            console.log(str);
+        });
+
+        //the whole response has been recieved, so we just print it out here
+        response.on('end', function () {
+            console.log(str);
+        });
+    }
+
+    http.request(options, callback).end();
+
+    // return answer;
+}
+
 function getDataFromServer() {
     console.log("GET all urls");
 
     const options = {
-        // host: 'localhost',
-        // port: `${process.env.PORT}`,
-        // path: '/urls/',
-        uri: `localhost:${process.env.PORT}/urls/`,
+        host: 'localhost',
+        port: `${process.env.PORT}`,
+        path: '/urls/',
+        // uri: `localhost:${process.env.PORT}/urls/`,
         method: 'GET',
-        // headers: {
-        //     // 'Content-Type': 'application/x-www-form-urlencoded'
-        //     'Content-Type': 'application/json; charset=utf-8',
-        //     // 'Content-Length': Buffer.byteLength(1000)
-        // }
+        headers: {
+            // 'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json; charset=utf-8',
+            // 'Content-Length': Buffer.byteLength(1000)
+        }
     };
 
     let urlArray = [];
