@@ -29,7 +29,7 @@ function getUrlArrayFromFile() {
 }
 
 function getUrlArray() {
-    let urlArray = [];
+    let urlArray = new Array;
 
     http.get({
         hostname: 'localhost',
@@ -41,7 +41,6 @@ function getUrlArray() {
         res.on('data', function (body) {
             console.log(JSON.stringify(JSON.parse(body)));
             let temp_arr = JSON.parse(body);
-            urlArray = temp_arr;
             // console.log(typeof (temp_arr));
             for (let i = 0; i < temp_arr.length; i++) {
                 // console.log(temp_arr[i]);
@@ -51,7 +50,13 @@ function getUrlArray() {
                     urlArray.push(temp_arr[i].url);
                 }
             }
+
+            console.log(urlArray);
         });
+
+        // res.on('close', function () {
+        //     return urlArray;
+        // });
     });
 
     console.log(urlArray.length);
