@@ -54,6 +54,11 @@ function getUrlArray() {
             console.log(urlArray);
         });
 
+        // res.on('end', () => {
+        //     console.log(urlArray);
+        //     return urlArray;
+        // });
+
         // res.on('close', function () {
         //     return urlArray;
         // });
