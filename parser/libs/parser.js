@@ -29,19 +29,35 @@ function getUrlArrayFromFile() {
 }
 
 function getUrlArray() {
-    // let urlArray = getDataFromServer();
-    let urlArray = getFromServer(); // using 'request'
-    let resultUrlArray = [];
+    let urlArray = [];
 
-    for (let i = 0; i < urlArray.length; i++) {
-        let urlTemp = urlArray[i];
-        console.log(urlTemp);
-        if (urlTemp.status === "NOT_ATTEMPTED") {
-            resultUrlArray.push(urlTemp);
-        }
-    }
+    http.get({
+        hostname: 'localhost',
+        port: `${process.env.PORT}`,
+        path: '/urls/',
+        agent: false  // create a new agent just for this one request
+    }, (res) => {
+        // Do stuff with response
+        res.on('data', function (body) {
+            console.log(JSON.stringify(JSON.parse(body)));
+            let temp_arr = JSON.parse(body);
+            urlArray = temp_arr;
+            // console.log(typeof (temp_arr));
+            for (let i = 0; i < temp_arr.length; i++) {
+                // console.log(temp_arr[i]);
+                console.log(temp_arr[i].url);
+                console.log(temp_arr[i].status);
+                if (temp_arr[i].status === "NOT_ATTEMPTED") {
+                    urlArray.push(temp_arr[i].url);
+                }
+            }
+        });
+    });
 
-    return resultUrlArray;
+    console.log(urlArray.length);
+    console.log("Url array in lib: " + urlArray);
+
+    return urlArray;
 
     // get from db - all urlQueue
     // for (i = 0; i < length; i++)
@@ -49,70 +65,6 @@ function getUrlArray() {
     // add in urlArray
     // return urlArray
 }
-
-function getFromServer() {
-    // METHOD, that use 'request'
-
-    // const url = `localhost:${process.env.PORT}/urls/`;
-
-    var options = {
-        host: 'localhost',
-        path: `${process.env.PORT}/urls/`
-    };
-
-    callback = function (response) {
-        var str = '';
-
-        //another chunk of data has been recieved, so append it to `str`
-        response.on('data', function (chunk) {
-            str += chunk;
-            console.log(str);
-        });
-
-        //the whole response has been recieved, so we just print it out here
-        response.on('end', function () {
-            console.log(str);
-        });
-    }
-
-    http.request(options, callback).end();
-
-    // return answer;
-}
-
-function getDataFromServer() {
-    console.log("GET all urls");
-
-    const options = {
-        host: 'localhost',
-        port: `${process.env.PORT}`,
-        path: '/urls/',
-        // uri: `localhost:${process.env.PORT}/urls/`,
-        method: 'GET',
-        headers: {
-            // 'Content-Type': 'application/x-www-form-urlencoded'
-            'Content-Type': 'application/json; charset=utf-8',
-            // 'Content-Length': Buffer.byteLength(1000)
-        }
-    };
-
-    let urlArray = [];
-
-    const httpreq = http.request(options, function (error, response, body) {
-        if (!error) {
-            // res.write(response.statusCode);
-            console.log(response.statusCode);
-            console.log(body);
-        } else {
-            // res.write(error);
-            console.log(error);
-        }
-    });
-    httpreq.write();
-    httpreq.end();
-
-    return urlArray;
-};
 
 function mainParser(data) {
     let json = findJsonObject(data);
