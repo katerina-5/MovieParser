@@ -17,52 +17,62 @@ module.exports = {
 
 function getUrlArrayFromFile() {
     let urlArray = [];
+    let text = "";
 
-    let pathFile = __dirname + "/urls.txt";
+    let pathFile = __dirname + "\\urls.txt";
     console.log(pathFile);
 
     httpRequest = new XMLHttpRequest();
-    httpRequest.open("GET", pathFile, true);
-    console.log(httpRequest.responseText);
-    console.log(httpRequest.status);
+    // httpRequest.open("GET", "file://" + pathFile, true);
+    httpRequest.open("GET", "urls.txt", true);
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === 4) {
+            if (httpRequest.status === 200 || httpRequest.status == 0) {
+                text = httpRequest.responseText;
+            }
+        }
+    }
     httpRequest.send(null);
+
+    console.log(text);
+    // urlArray = text.split("\n");
 }
 
 function getUrlArray() {
-    let urlArray = new Array;
+    let urlArray = getFromServer();
 
-    http.get({
-        hostname: 'localhost',
-        port: `${process.env.PORT}`,
-        path: '/urls/',
-        agent: false  // create a new agent just for this one request
-    }, (res) => {
-        // Do stuff with response
-        res.on('data', function (body) {
-            console.log(JSON.stringify(JSON.parse(body)));
-            let temp_arr = JSON.parse(body);
-            // console.log(typeof (temp_arr));
-            for (let i = 0; i < temp_arr.length; i++) {
-                // console.log(temp_arr[i]);
-                console.log(temp_arr[i].url);
-                console.log(temp_arr[i].status);
-                if (temp_arr[i].status === "NOT_ATTEMPTED") {
-                    urlArray.push(temp_arr[i].url);
-                }
-            }
+    // http.get({
+    //     hostname: 'localhost',
+    //     port: `${process.env.PORT}`,
+    //     path: '/urls/',
+    //     agent: false  // create a new agent just for this one request
+    // }, (res) => {
+    //     // Do stuff with response
+    //     res.on('data', function (body) {
+    //         console.log(JSON.stringify(JSON.parse(body)));
+    //         let temp_arr = JSON.parse(body);
+    //         // console.log(typeof (temp_arr));
+    //         for (let i = 0; i < temp_arr.length; i++) {
+    //             // console.log(temp_arr[i]);
+    //             console.log(temp_arr[i].url);
+    //             console.log(temp_arr[i].status);
+    //             if (temp_arr[i].status === "NOT_ATTEMPTED") {
+    //                 urlArray.push(temp_arr[i].url);
+    //             }
+    //         }
 
-            console.log(urlArray);
-        });
+    //         console.log(urlArray);
+    //     });
 
-        // res.on('end', () => {
-        //     console.log(urlArray);
-        //     return urlArray;
-        // });
+    //     // res.on('end', () => {
+    //     //     console.log(urlArray);
+    //     //     return urlArray;
+    //     // });
 
-        // res.on('close', function () {
-        //     return urlArray;
-        // });
-    });
+    //     // res.on('close', function () {
+    //     //     return urlArray;
+    //     // });
+    // });
 
     console.log(urlArray.length);
     console.log("Url array in lib: " + urlArray);
@@ -74,6 +84,58 @@ function getUrlArray() {
     // if (status === "NOT_ATTEMPTED")
     // add in urlArray
     // return urlArray
+}
+
+function getFromServer() {
+    let urlArray = new Array();
+
+    http.get({
+        hostname: 'localhost',
+        port: `${process.env.PORT}`,
+        path: '/urls/',
+        agent: false  // create a new agent just for this one request
+    }, (res) => {
+        // Do stuff with response
+        let rawData = '';
+        res.on('data', (chunk) => { rawData += chunk; });
+        res.on('end', () => {
+            try {
+                const temp_arr = JSON.parse(rawData);
+                console.log(temp_arr);
+
+                for (let i = 0; i < temp_arr.length; i++) {
+                    // console.log(temp_arr[i]);
+                    console.log(temp_arr[i].url);
+                    console.log(temp_arr[i].status);
+                    if (temp_arr[i].status === "NOT_ATTEMPTED") {
+                        urlArray.push(temp_arr[i].url);
+                    }
+                }
+
+                console.log(urlArray);
+            } catch (e) {
+                console.error(e.message);
+            }
+        });
+
+        // res.on('data', function (body) {
+        //     console.log(JSON.stringify(JSON.parse(body)));
+        //     let temp_arr = JSON.parse(body);
+        //     // console.log(typeof (temp_arr));
+        //     for (let i = 0; i < temp_arr.length; i++) {
+        //         // console.log(temp_arr[i]);
+        //         console.log(temp_arr[i].url);
+        //         console.log(temp_arr[i].status);
+        //         if (temp_arr[i].status === "NOT_ATTEMPTED") {
+        //             urlArray.push(temp_arr[i].url);
+        //         }
+        //     }
+
+        //     console.log(urlArray);
+        // });
+    });
+
+    return urlArray;
 }
 
 function mainParser(data) {
