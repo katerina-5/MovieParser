@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 const http = require('http');
+// const urlArray = require('../parser/another_parser').getUrlArray();
 
 require('dotenv').config();
 
@@ -14,13 +15,12 @@ const port = process.env.PARSER_PORT;
 
 console.log(`Parser is listening on port ${process.env.PARSER_PORT}`);
 
-const urlArray = libParser.getUrlArray();
-console.log("Url array in parser: " + urlArray);
-
-// const urlArray = ['/title/tt0108778/', '/title/tt2575988/', '/title/tt0238784/', '/title/tt1243957/', '/title/tt5523010/', '/title/tt1661199/', '/title/tt0414387/'];
+const urlArray = ['/title/tt0108778/', '/title/tt2575988/', '/title/tt0238784/', '/title/tt1243957/', '/title/tt5523010/', '/title/tt1661199/', '/title/tt0414387/'];
 // libParser.getUrlArrayFromFile();
 // const urlBegin = process.env.URL || 'https://www.imdb.com';
 const urlBegin = process.env.URL;
+// const urlArray = libParser.getUrlArray();
+// console.log("Url array in parser: " + urlArray);
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
