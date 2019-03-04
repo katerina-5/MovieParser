@@ -1,3 +1,5 @@
+const parser = require('../../parser/app-parser.js');
+
 module.exports = {
   getBase
 };
