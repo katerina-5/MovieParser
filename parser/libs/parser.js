@@ -38,8 +38,14 @@ function getUrlArrayFromFile() {
     // urlArray = text.split("\n");
 }
 
-function getUrlArray() {
-    let urlArray = getFromServer();
+async function getUrlArray() {
+    const urlArray = await getFromServer()
+    console.log('=====================\n', urlArray)
+    // getFromServer().then(urlArray => {
+    //     console.log('=====================\n', urlArray)
+    // }).catch(error => {
+
+    // })
 
     // http.get({
     //     hostname: 'localhost',
@@ -53,7 +59,8 @@ function getUrlArray() {
     //         let temp_arr = JSON.parse(body);
     //         // console.log(typeof (temp_arr));
     //         for (let i = 0; i < temp_arr.length; i++) {
-    //             // console.log(temp_arr[i]);
+    //             // 
+    // console.log(temp_arr[i]);
     //             console.log(temp_arr[i].url);
     //             console.log(temp_arr[i].status);
     //             if (temp_arr[i].status === "NOT_ATTEMPTED") {
@@ -74,8 +81,8 @@ function getUrlArray() {
     //     // });
     // });
 
-    console.log(urlArray.length);
-    console.log("Url array in lib: " + urlArray);
+    // console.log(urlArray.length);
+    // console.log("Url array in lib: " + urlArray);
 
     return urlArray;
 
@@ -84,58 +91,61 @@ function getUrlArray() {
     // if (status === "NOT_ATTEMPTED")
     // add in urlArray
     // return urlArray
+
 }
 
 function getFromServer() {
     let urlArray = new Array();
 
-    http.get({
-        hostname: 'localhost',
-        port: `${process.env.PORT}`,
-        path: '/urls/',
-        agent: false  // create a new agent just for this one request
-    }, (res) => {
-        // Do stuff with response
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
-        res.on('end', () => {
-            try {
-                const temp_arr = JSON.parse(rawData);
-                console.log(temp_arr);
+    return new Promise((resolve, reject) => {
+        http.get({
+            hostname: 'localhost',
+            port: `${process.env.PORT}`,
+            path: '/urls/',
+            agent: false  // create a new agent just for this one request
+        }, (res) => {
+            // Do stuff with response
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                try {
+                    const temp_arr = JSON.parse(rawData);
+                    console.log(temp_arr);
 
-                for (let i = 0; i < temp_arr.length; i++) {
-                    // console.log(temp_arr[i]);
-                    console.log(temp_arr[i].url);
-                    console.log(temp_arr[i].status);
-                    if (temp_arr[i].status === "NOT_ATTEMPTED") {
-                        urlArray.push(temp_arr[i].url);
+                    for (let i = 0; i < temp_arr.length; i++) {
+                        // console.log(temp_arr[i]);
+                        console.log(temp_arr[i].url);
+                        console.log(temp_arr[i].status);
+                        if (temp_arr[i].status === "NOT_ATTEMPTED") {
+                            urlArray.push(temp_arr[i].url);
+                        }
                     }
+
+                    console.log(urlArray);
+                    resolve(urlArray)
+                } catch (e) {
+                    console.error(e.message);
+                    reject(e)
                 }
+            });
 
-                console.log(urlArray);
-            } catch (e) {
-                console.error(e.message);
-            }
+            // res.on('data', function (body) {
+            //     console.log(JSON.stringify(JSON.parse(body)));
+            //     let temp_arr = JSON.parse(body);
+            //     // console.log(typeof (temp_arr));
+            //     for (let i = 0; i < temp_arr.length; i++) {
+            //         // console.log(temp_arr[i]);
+            //         console.log(temp_arr[i].url);
+            //         console.log(temp_arr[i].status);
+            //         if (temp_arr[i].status === "NOT_ATTEMPTED") {
+            //             urlArray.push(temp_arr[i].url);
+            //         }
+            //     }
+
+            //     console.log(urlArray);
+            // });
         });
-
-        // res.on('data', function (body) {
-        //     console.log(JSON.stringify(JSON.parse(body)));
-        //     let temp_arr = JSON.parse(body);
-        //     // console.log(typeof (temp_arr));
-        //     for (let i = 0; i < temp_arr.length; i++) {
-        //         // console.log(temp_arr[i]);
-        //         console.log(temp_arr[i].url);
-        //         console.log(temp_arr[i].status);
-        //         if (temp_arr[i].status === "NOT_ATTEMPTED") {
-        //             urlArray.push(temp_arr[i].url);
-        //         }
-        //     }
-
-        //     console.log(urlArray);
-        // });
-    });
-
-    return urlArray;
+    })
 }
 
 function mainParser(data) {
