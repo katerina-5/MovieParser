@@ -1,6 +1,5 @@
 const cluster = require('cluster');
 const http = require('http');
-// const urlArray = require('../parser/another_parser').getUrlArray();
 
 require('dotenv').config();
 
