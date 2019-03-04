@@ -9,14 +9,17 @@ module.exports = {
 };
 
 // Display list of all movies.
-function get_movie_list(req, res, next) {
+async function get_movie_list(req, res, next) {
   console.log('List of movies');
 
-  Movies.find({})
-    .then(movies => {
-      res.send(movies);
-    })
-    .catch(error => next(error));
+  const movies = await Movies.find({})
+  res.send(movies);
+
+  // Movies.find({})
+  //   .then(movies => {
+  //     res.send(movies);
+  //   })
+  //   .catch(error => next(error));
 }
 
 // Display detail page for a specific movie.
