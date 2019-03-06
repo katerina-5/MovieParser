@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const UrlQueue = require('../models/urlQueue');
 
 module.exports = {
@@ -56,8 +57,32 @@ function delete_url(req, res, next) {
 // url update on PUT.
 function update_url(req, res, next) {
     console.log('Url update');
+    // console.log("id: ", req.params.id);
+    // console.log("body: ", req.body);
+    // console.log("status: ", req.body.status);
 
-    UrlQueue.findByIdAndUpdate(req.params.id, req.body)
+    // console.log(mongoose.Types.ObjectId.isValid(req.params.id));
+    // console.log(mongoose.Types.ObjectId(req.params.id));
+
+    let id = req.body._id;
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+        id = req.params.id;
+    } else {
+        id = req.body._id;
+    }
+
+    UrlQueue.findByIdAndUpdate(id, { status: req.body.status })
+        .then(url => {
+            res.send(url);
+        })
+        .catch(error => next(error));
+}
+
+// status of url update on PUT.
+function update_url_status(req, res, next) {
+    console.log('Status of url update');
+
+    UrlQueue.findByIdAndUpdate(req.params.id, { status: req.body.status })
         .then(url => {
             res.send(url);
         })

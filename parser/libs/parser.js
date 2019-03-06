@@ -5,11 +5,11 @@ const request = require('request');
 require('dotenv').config();
 
 module.exports = {
-    getUrlArrayFromFile,
     getUrlArray,
     mainParser,
     getJSON,
     postJSON,
+    putJSON,
     modifyJSON,
     postDataToServer,
     findJsonObject
@@ -39,62 +39,13 @@ function getUrlArrayFromFile() {
 }
 
 async function getUrlArray() {
-    const urlArray = await getFromServer()
-    console.log('=====================\n', urlArray)
-    // getFromServer().then(urlArray => {
-    //     console.log('=====================\n', urlArray)
-    // }).catch(error => {
-
-    // })
-
-    // http.get({
-    //     hostname: 'localhost',
-    //     port: `${process.env.PORT}`,
-    //     path: '/urls/',
-    //     agent: false  // create a new agent just for this one request
-    // }, (res) => {
-    //     // Do stuff with response
-    //     res.on('data', function (body) {
-    //         console.log(JSON.stringify(JSON.parse(body)));
-    //         let temp_arr = JSON.parse(body);
-    //         // console.log(typeof (temp_arr));
-    //         for (let i = 0; i < temp_arr.length; i++) {
-    //             // 
-    // console.log(temp_arr[i]);
-    //             console.log(temp_arr[i].url);
-    //             console.log(temp_arr[i].status);
-    //             if (temp_arr[i].status === "NOT_ATTEMPTED") {
-    //                 urlArray.push(temp_arr[i].url);
-    //             }
-    //         }
-
-    //         console.log(urlArray);
-    //     });
-
-    //     // res.on('end', () => {
-    //     //     console.log(urlArray);
-    //     //     return urlArray;
-    //     // });
-
-    //     // res.on('close', function () {
-    //     //     return urlArray;
-    //     // });
-    // });
-
-    // console.log(urlArray.length);
-    // console.log("Url array in lib: " + urlArray);
+    const urlArray = await getFromServer();
+    // console.log('=====================\n', urlArray);
 
     return urlArray;
-
-    // get from db - all urlQueue
-    // for (i = 0; i < length; i++)
-    // if (status === "NOT_ATTEMPTED")
-    // add in urlArray
-    // return urlArray
-
 }
 
-function getFromServer() {
+async function getFromServer() {
     let urlArray = new Array();
 
     return new Promise((resolve, reject) => {
@@ -110,42 +61,110 @@ function getFromServer() {
             res.on('end', () => {
                 try {
                     const temp_arr = JSON.parse(rawData);
-                    console.log(temp_arr);
+                    // console.log(temp_arr);
 
                     for (let i = 0; i < temp_arr.length; i++) {
-                        // console.log(temp_arr[i]);
-                        console.log(temp_arr[i].url);
-                        console.log(temp_arr[i].status);
+                        // console.log(temp_arr[i].url);
+                        // console.log(temp_arr[i].status);
                         if (temp_arr[i].status === "NOT_ATTEMPTED") {
                             urlArray.push(temp_arr[i].url);
+
+                            if (await isMovieInDatabase(temp_arr[i].url)) {
+                                // PUT this movie
+                            } else {
+                                // POST this movie
+                            }
+
+                            setStatusOfUrl(temp_arr[i], "SOLVED");
                         }
                     }
 
-                    console.log(urlArray);
-                    resolve(urlArray)
+                    // console.log(urlArray);
+                    resolve(urlArray);
                 } catch (e) {
                     console.error(e.message);
-                    reject(e)
+                    reject(e);
                 }
             });
-
-            // res.on('data', function (body) {
-            //     console.log(JSON.stringify(JSON.parse(body)));
-            //     let temp_arr = JSON.parse(body);
-            //     // console.log(typeof (temp_arr));
-            //     for (let i = 0; i < temp_arr.length; i++) {
-            //         // console.log(temp_arr[i]);
-            //         console.log(temp_arr[i].url);
-            //         console.log(temp_arr[i].status);
-            //         if (temp_arr[i].status === "NOT_ATTEMPTED") {
-            //             urlArray.push(temp_arr[i].url);
-            //         }
-            //     }
-
-            //     console.log(urlArray);
-            // });
         });
-    })
+    });
+}
+
+function setStatusOfUrl(json, status) {
+    console.log("PUT this status: ", status);
+    console.log("to this url id: ", json._id);
+
+    json.status = status;
+
+    const data = querystring.stringify(json);
+
+    const options = {
+        host: 'localhost',
+        port: `${process.env.PORT}`,
+        path: `/urls/:id`,
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(data)
+        },
+        params: {
+            id: json._id
+        }
+    };
+
+    const httpreq = http.request(options, function (response) {
+        response.setEncoding('utf8');
+        response.on('data', function (chunk) {
+            console.log("body: " + chunk);
+        });
+        response.on('end', function () {
+        });
+    });
+    httpreq.write(data);
+    httpreq.end();
+}
+
+async function isMovieInDatabase(url) {
+    const result = await getMovie(url);
+
+    console.log("Movie is in database: ", result);
+
+    return result;
+}
+
+function getMovie(url) {
+    let result = false;
+
+    return new Promise((resolve, reject) => {
+        http.get({
+            hostname: 'localhost',
+            port: `${process.env.PORT}`,
+            path: '/movies/',
+            agent: false  // create a new agent just for this one request
+        }, (res) => {
+            // Do stuff with response
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                try {
+                    const temp_arr = JSON.parse(rawData);
+
+                    for (let i = 0; i < temp_arr.length; i++) {
+                        if (temp_arr[i].url === url) {
+                            console.log("Temp url: ", temp_arr[i].url);
+                            console.log("Const url: ", url);
+                            result = true;
+                        }
+                    }
+
+                    resolve(result);
+                } catch (e) {
+                    console.error(e.message);
+                    reject(e);
+                }
+            });
+        });
+    });
 }
 
 function mainParser(data) {
@@ -183,6 +202,15 @@ function postJSON(json) {
     xhr.send(JSON.stringify(json));
 };
 
+function putJSON(id, json) {
+    console.log(json);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('PUT', `localhost:3000/movies/:${id}`, true);
+    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    xhr.send(JSON.stringify(json));
+};
+
 function modifyJSON(json) {
     // json = JSON.parse(JSON.stringify(json).split('"@type":').join('"movieType":'));
 
@@ -211,6 +239,34 @@ function postDataToServer(json) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(data)
+        }
+    };
+
+    const httpreq = http.request(options, function (response) {
+        response.setEncoding('utf8');
+        response.on('data', function (chunk) {
+            console.log("body: " + chunk);
+        });
+        response.on('end', function () {
+        });
+    });
+    httpreq.write(data);
+    httpreq.end();
+};
+
+function putDataToServerById(id, json) {
+    console.log("PUT this movie: ", json.name);
+
+    const data = querystring.stringify(json);
+
+    const options = {
+        host: 'localhost',
+        port: `${process.env.PORT}`,
+        path: `/movies/:${id}`,
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
             // 'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(data)
         }
@@ -223,7 +279,7 @@ function postDataToServer(json) {
         });
         response.on('end', function () {
             // res.send('ok');
-        })
+        });
     });
     httpreq.write(data);
     httpreq.end();
