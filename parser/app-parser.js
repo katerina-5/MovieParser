@@ -19,17 +19,22 @@ const port = process.env.PARSER_PORT;
     //     '/title/tt1243957/', '/title/tt5523010/', '/title/tt1661199/', '/title/tt0414387/'];
     // const urlBegin = process.env.URL || 'https://www.imdb.com';
     const urlBegin = process.env.URL;
-    const urlArray = await libParser.getUrlArray();
-    console.log("Url array in parser: " + urlArray);
+    // const urlArray = await libParser.getUrlArray();
+    // console.log("Url array in parser: " + urlArray);
 
     if (cluster.isMaster) {
         console.log(`Master ${process.pid} is running`);
 
-        // Fork workers.
-        for (let i = 0; i < urlArray.length; i++) {
+        while (true) {
+            const one_url = await libParser.getOneUrl();
+
+            if (one_url === null) {
+                break;
+            }
+
             cluster.fork();
 
-            let url = urlBegin + urlArray[i];
+            let url = urlBegin + one_url.url;
 
             libParser.getJSON(url, function (err, data) {
                 console.log(url);
@@ -39,7 +44,25 @@ const port = process.env.PARSER_PORT;
                     libParser.mainParser(data);
                 }
             });
+
+            libParser.setStatusOfUrl(one_url, "SOLVED");
         }
+
+        // Fork workers.
+        // for (let i = 0; i < urlArray.length; i++) {
+        //     cluster.fork();
+
+        //     let url = urlBegin + one_url;
+
+        //     libParser.getJSON(url, function (err, data) {
+        //         console.log(url);
+        //         if (err !== null) {
+        //             console.log('Something went wrong: ' + err);
+        //         } else {
+        //             libParser.mainParser(data);
+        //         }
+        //     });
+        // }
 
         cluster.on('exit', (worker, code, signal) => {
             console.log(`Worker ${worker.process.pid} died`);

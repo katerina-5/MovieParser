@@ -5,6 +5,8 @@ const request = require('request');
 require('dotenv').config();
 
 module.exports = {
+    getOneUrl,
+    setStatusOfUrl,
     getUrlArray,
     mainParser,
     getJSON,
@@ -13,6 +15,56 @@ module.exports = {
     modifyJSON,
     postDataToServer,
     findJsonObject
+}
+
+async function getOneUrl() {
+    let url = await getUrlFromServer();
+
+    if (url.status === "SOLVED") {
+        url = null;
+    }
+
+    return url;
+}
+
+async function getUrlFromServer() {
+    let url = "";
+    let status = "NOT_ATTEMPTED";
+
+    return new Promise((resolve, reject) => {
+        http.get({
+            hostname: 'localhost',
+            port: `${process.env.PORT}`,
+            // path: `/urls/another/:${status}`,
+            path: '/urls/status',
+            agent: false  // create a new agent just for this one request
+        }, (res) => {
+            // Do stuff with response
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                try {
+                    const temp = JSON.parse(rawData);
+                    console.log(temp);
+
+                    url = temp;
+
+                    // if (await isMovieInDatabase(temp_arr[i].url)) {
+                    //     // PUT this movie
+                    // } else {
+                    //     // POST this movie
+                    // }
+
+                    // setStatusOfUrl(temp, "SOLVED");
+
+                    resolve(url);
+                } catch (e) {
+                    console.error(e.message);
+                    reject(e);
+                }
+            });
+        });
+    });
 }
 
 function getUrlArrayFromFile() {
@@ -69,11 +121,11 @@ async function getFromServer() {
                         if (temp_arr[i].status === "NOT_ATTEMPTED") {
                             urlArray.push(temp_arr[i].url);
 
-                            if (await isMovieInDatabase(temp_arr[i].url)) {
+                            /*if (await isMovieInDatabase(temp_arr[i].url)) {
                                 // PUT this movie
                             } else {
                                 // POST this movie
-                            }
+                            }*/
 
                             setStatusOfUrl(temp_arr[i], "SOLVED");
                         }
@@ -139,7 +191,7 @@ function getMovie(url) {
         http.get({
             hostname: 'localhost',
             port: `${process.env.PORT}`,
-            path: '/movies/',
+            path: `/movies/title:${url}`,
             agent: false  // create a new agent just for this one request
         }, (res) => {
             // Do stuff with response
@@ -147,15 +199,20 @@ function getMovie(url) {
             res.on('data', (chunk) => { rawData += chunk; });
             res.on('end', () => {
                 try {
-                    const temp_arr = JSON.parse(rawData);
-
-                    for (let i = 0; i < temp_arr.length; i++) {
-                        if (temp_arr[i].url === url) {
-                            console.log("Temp url: ", temp_arr[i].url);
-                            console.log("Const url: ", url);
-                            result = true;
-                        }
+                    const temp = JSON.parse(rawData);
+                    if (temp.url === url) {
+                        console.log("Temp url: ", temp_arr[i].url);
+                        console.log("Const url: ", url);
+                        result = true;
                     }
+
+                    // for (let i = 0; i < temp_arr.length; i++) {
+                    //     if (temp_arr[i].url === url) {
+                    //         console.log("Temp url: ", temp_arr[i].url);
+                    //         console.log("Const url: ", url);
+                    //         result = true;
+                    //     }
+                    // }
 
                     resolve(result);
                 } catch (e) {
@@ -167,14 +224,22 @@ function getMovie(url) {
     });
 }
 
-function mainParser(data) {
+async function mainParser(data) {
     let json = findJsonObject(data);
     console.log(json.name);
-    console.log("Actors: ", json.actor);
+    // console.log("Actors: ", json.actor);
 
-    postDataToServer(modifyJSON(json));
+    const check = await isMovieInDatabase(json.url);
 
-    console.log("Actors after modify: ", modifyJSON(json).actors);
+    if (check) {
+        // PUT this movie
+        putDataToServerById(modifyJSON(json));
+    } else {
+        // POST this movie
+        postDataToServer(modifyJSON(json));
+    }
+
+    // console.log("Actors after modify: ", modifyJSON(json).actors);
 }
 
 function getJSON(url, callback) {
@@ -255,8 +320,9 @@ function postDataToServer(json) {
     httpreq.end();
 };
 
-function putDataToServerById(id, json) {
+function putDataToServerById(json) {
     console.log("PUT this movie: ", json.name);
+    let id = json._id;
 
     const data = querystring.stringify(json);
 
