@@ -29,6 +29,13 @@ router.get('/status', function (req, res, next) {
             res.send(url);
         })
         .catch(error => next(error));
+
+    // UrlQueue.find({ status: "NOT_ATTEMPTED" })
+    //     .then(url => {
+    //         console.log(url);
+    //         res.send(url);
+    //     })
+    //     .catch(error => next(error));
 });
 
 // GET request for one Url.

@@ -49,14 +49,6 @@ async function getUrlFromServer() {
 
                     url = temp;
 
-                    // if (await isMovieInDatabase(temp_arr[i].url)) {
-                    //     // PUT this movie
-                    // } else {
-                    //     // POST this movie
-                    // }
-
-                    // setStatusOfUrl(temp, "SOLVED");
-
                     resolve(url);
                 } catch (e) {
                     console.error(e.message);
@@ -116,16 +108,8 @@ async function getFromServer() {
                     // console.log(temp_arr);
 
                     for (let i = 0; i < temp_arr.length; i++) {
-                        // console.log(temp_arr[i].url);
-                        // console.log(temp_arr[i].status);
                         if (temp_arr[i].status === "NOT_ATTEMPTED") {
                             urlArray.push(temp_arr[i].url);
-
-                            /*if (await isMovieInDatabase(temp_arr[i].url)) {
-                                // PUT this movie
-                            } else {
-                                // POST this movie
-                            }*/
 
                             setStatusOfUrl(temp_arr[i], "SOLVED");
                         }
