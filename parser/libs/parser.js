@@ -20,9 +20,9 @@ module.exports = {
 async function getOneUrl() {
     let url = await getUrlFromServer();
 
-    if (url.status === "SOLVED") {
-        url = null;
-    }
+    // if (url.status === "SOLVED") {
+    //     url = null;
+    // }
 
     return url;
 }
@@ -44,6 +44,7 @@ async function getUrlFromServer() {
             res.on('data', (chunk) => { rawData += chunk; });
             res.on('end', () => {
                 try {
+                    console.log(rawData);
                     const temp = JSON.parse(rawData);
                     console.log(temp);
 
@@ -52,7 +53,7 @@ async function getUrlFromServer() {
                     resolve(url);
                 } catch (e) {
                     console.error(e.message);
-                    reject(e);
+                    resolve({});
                 }
             });
         });

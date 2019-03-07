@@ -23,7 +23,7 @@ router.get('/', url_controller.get_url_list);
 router.get('/status', function (req, res, next) {
     console.log("Search by status");
 
-    UrlQueue.findOne({}, { status: "NOT_ATTEMPTED", url: "" })
+    UrlQueue.findOne({ status: "NOT_ATTEMPTED" })
         .then(url => {
             console.log(url);
             res.send(url);

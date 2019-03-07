@@ -28,7 +28,7 @@ const port = process.env.PARSER_PORT;
         while (true) {
             const one_url = await libParser.getOneUrl();
 
-            if (one_url === null) {
+            if (JSON.stringify(one_url) === JSON.stringify({})) {
                 break;
             }
 
