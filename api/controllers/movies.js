@@ -34,16 +34,37 @@ function get_movie_detail(req, res, next) {
 }
 
 // movie create on POST.
-function create_movie(req, res, next) {
+async function create_movie(req, res, next) {
   console.log('Movie create');
 
-  // console.log(req.body);
+  const movie = await Movies.findOne({ url: req.body.url });
+  console.log(movie);
 
-  Movies.create(req.body)
-    .then(movie => {
-      res.send(movie);
-    })
-    .catch(error => next(error));
+  if (movie == null) {
+    // create
+    console.log("need to create");
+    Movies.create(req.body)
+      .then(movie => {
+        console.log(movie.url, " successfully create");
+        res.send(movie);
+      })
+      .catch(error => next(error));
+  } else {
+    // update
+    console.log("need to update");
+    Movies.findByIdAndUpdate(req.body._id, req.body)
+      .then(movie => {
+        console.log(movie.url, " successfully update");
+        res.send(movie);
+      })
+      .catch(error => next(error));
+  }
+
+  // Movies.create(req.body)
+  //   .then(movie => {
+  //     res.send(movie);
+  //   })
+  //   .catch(error => next(error));
 }
 
 // movie delete on DELETE.
